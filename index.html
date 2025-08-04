@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday!</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;500;600;700;800&display=swap">
+    <style>
+        /* Custom CSS for a clean, animated background */
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(-45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 400% 400%;
+            animation: gradient-animation 15s ease infinite;
+            overflow: hidden;
+        }
+        
+        .confetti-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .title-font {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .pop-on-load {
+            animation: pop 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+            opacity: 0;
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(0.5) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        
+        /* Fullscreen video styles with fade animations */
+        .video-container-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            background-color: #1a1a1a;
+            cursor: pointer;
+            opacity: 1;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .video-container-fullscreen.fade-out {
+            opacity: 0;
+        }
+        
+        .video-fullscreen {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out; /* Faster transition */
+        }
+        
+        .video-fullscreen.fade-in {
+            opacity: 1;
+        }
+        
+        .video-fullscreen.fade-out {
+            opacity: 0;
+        }
+        
+        /* Simple play button without glass effects */
+        .play-button {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .play-button:hover {
+            transform: scale(1.1);
+            background-color: rgba(255, 255, 255, 1);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Credits container with center alignment */
+        .credits-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #000;
+            color: white;
+            font-size: 2rem;
+            text-align: center;
+            overflow: hidden;
+            z-index: 21;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        
+        .credits-container.fade-in {
+            opacity: 1;
+        }
+        
+        .credits-container.fade-out {
+            opacity: 0;
+        }
+        
+        .credits-frame {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            max-width: 1000px;
+            max-height: 800px;
+            background-image: url('http://googleusercontent.com/file_content/3');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5%;
+        }
+        
+        .credits-text-wrapper {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 0 10%;
+            animation: scroll-up 20s linear forwards;
+            text-align: center;
+        }
+        
+        @keyframes scroll-up {
+            0% { transform: translateY(100vh); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100%); opacity: 0; }
+        }
+        
+        .credit-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.025em;
+            text-align: center;
+        }
+        
+        .credit-item-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.025em;
+            text-align: center;
+        }
+        
+        .credit-title {
+            font-weight: 800;
+            font-size: 2.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        
+        /* Clean card design */
+        .birthday-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .card-fade-in {
+            animation: cardFadeIn 1s ease-in forwards;
+        }
+        
+        @keyframes cardFadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card-fade-out {
+            animation: cardFadeOut 1s ease-out forwards;
+        }
+        
+        @keyframes cardFadeOut {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <canvas id="confetti-canvas" class="confetti-container"></canvas>
+    
+    <div id="video-container" class="video-container-fullscreen flex-col">
+        <button id="playButton" class="play-button">
+            <svg class="h-24 w-24 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+        </button>
+        <p id="playMessage" class="mt-6 text-white text-lg md:text-2xl font-bold">Click to start the surprise!</p>
+        
+        <video id="birthdayVideo" class="video-fullscreen hidden" preload="auto">
+            <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+    
+    <div id="creditsPage" class="credits-container hidden">
+        <div class="credits-frame">
+            <div class="credits-text-wrapper space-y-4 md:space-y-6">
+                <p class="text-6xl font-bold title-font text-center">Credits</p>
+                
+                <p class="credit-title">Video</p>
+                <div class="credit-item-row">
+                    <p>Created by:</p>
+                    <p class="font-bold">Aanya</p>
+                </div>
+                <div class="credit-item-row">
+                    <p>Event planned by:</p>
+                    <p class="font-bold">Rania</p>
+                </div>
+                
+                <p class="credit-title">Special Thanks to</p>
+                <div class="credit-item">
+                    <p class="font-bold text-2xl">Everyone in Class XI C</p>
+                </div>
+                
+                <p class="credit-title">Software and Technology Used</p>
+                <div class="flex flex-col items-center justify-center gap-6">
+                    <div class="credit-item">
+                        <img src="/vscode-removebg-preview.svg" alt="Visual Studio Code Logo" class="w-60 h-auto">
+                    </div>
+                    <div class="credit-item">
+                        <img src="/alight_motion-removebg-preview.svg" alt="Alight Motion Logo" class="w-60 h-auto">
+                    </div>
+                    <div class="credit-item">
+                        <p class="mb-4">And not to forget the Brain</p>
+                        <img src="/image-removebg-preview.svg" alt="brain logo" class="w-60 h-auto">
+                    </div>
+                </div>
+                
+                <p class="credit-title">Site Developed by</p>
+                <div class="credit-item">
+                    <p class="font-bold text-2xl">Vishnu</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="birthdayCard" class="birthday-card relative text-gray-800 p-8 md:p-12 max-w-4xl w-full text-center space-y-8 pop-on-load hidden">
+        <div>
+            <h1 class="title-font text-5xl md:text-7xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-2 leading-tight">
+                Happy Birthday!
+            </h1>
+            <p class="text-2xl md:text-4xl font-light text-gray-600">Best wishes from Class XI C</p>
+        </div>
+        
+        <div class="space-y-4">
+            <p class="text-lg md:text-xl leading-relaxed">
+                Dear Sona Ma'am,
+            </p>
+            <p class="text-lg md:text-xl leading-relaxed">
+                On this special day, we, Class XI C, want to wish you the happiest birthday! Thank you for being the best Computer Science teacher, inspiring us every day with your knowledge and kindness. Your classes are always awesome, and we're so grateful to have you.
+            </p>
+            <p class="text-lg md:text-xl font-semibold text-gray-700">
+                With love and gratitude,
+                <br>
+                Class XI C
+            </p>
+        </div>
+        
+        <div class="w-full">
+            <h3 class="text-xl md:text-2xl font-bold mb-4 text-gray-700">A special message for you!</h3>
+            <video class="w-full rounded-2xl shadow-xl border-4 border-gray-200" controls preload="auto">
+                <source src="http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+    </div>
+
+    <script>
+        // Confetti animation using pure JavaScript and Canvas
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+        const videoContainer = document.getElementById('video-container');
+        const birthdayVideo = document.getElementById('birthdayVideo');
+        const birthdayCard = document.getElementById('birthdayCard');
+        const playButton = document.getElementById('playButton');
+        const playMessage = document.getElementById('playMessage');
+        const creditsPage = document.getElementById('creditsPage');
+
+        // Event listener for the play button
+        playButton.addEventListener('click', () => {
+            // Hide the button and the message with fade-out
+            playButton.style.opacity = '0';
+            playMessage.style.opacity = '0';
+            setTimeout(() => {
+                playButton.classList.add('hidden');
+                playMessage.classList.add('hidden');
+            }, 500);
+
+            birthdayVideo.classList.remove('hidden');
+            
+            // Add fade-in effect to video immediately
+            birthdayVideo.classList.add('fade-in');
+
+            // Set video to full volume and play
+            birthdayVideo.volume = 1;
+            birthdayVideo.play().then(() => {
+                // Request fullscreen for the video container
+                if (videoContainer.requestFullscreen) {
+                    videoContainer.requestFullscreen();
+                }
+            }).catch(error => {
+                console.error("Fullscreen or autoplay was blocked:", error);
+            });
+        });
+
+        // Event listener for when the video ends
+        birthdayVideo.addEventListener('ended', () => {
+            // Add fade-out effect to video
+            birthdayVideo.classList.remove('fade-in');
+            birthdayVideo.classList.add('fade-out');
+            videoContainer.classList.add('fade-out');
+            
+            // Immediate transition to credits (no delay)
+            setTimeout(() => {
+                // Exit fullscreen
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+                // Hide the fullscreen video container and show the credits page immediately
+                videoContainer.classList.add('hidden');
+                creditsPage.classList.remove('hidden');
+                creditsPage.classList.add('fade-in');
+                
+                // Set a timeout to hide the credits and show the birthday card
+                setTimeout(() => {
+                    creditsPage.classList.remove('fade-in');
+                    creditsPage.classList.add('fade-out');
+                    setTimeout(() => {
+                        creditsPage.classList.add('hidden');
+                        birthdayCard.classList.remove('hidden');
+                        birthdayCard.classList.add('card-fade-in');
+                    }, 1000);
+                }, 13000);
+            }, 300); // Reduced from 1000ms to 300ms for quicker transition
+        });
+
+        // Confetti piece class
+        class Confetti {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = -20;
+                this.size = Math.random() * 10 + 5;
+                this.speed = Math.random() * 3 + 1;
+                this.angle = Math.random() * 360;
+                this.rotationSpeed = Math.random() * 0.1 - 0.05;
+                this.color = `hsl(${Math.random() * 360}, 100%, 75%)`;
+            }
+
+            update() {
+                this.y += this.speed;
+                this.angle += this.rotationSpeed;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+                ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+                ctx.restore();
+            }
+        }
+
+        // Initialize confetti array
+        let confettiPieces = [];
+
+        // Animation loop for confetti
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettiPieces.forEach((piece, index) => {
+                piece.update();
+                piece.draw();
+                // Remove confetti when it falls off the screen
+                if (piece.y > canvas.height) {
+                    confettiPieces.splice(index, 1);
+                }
+            });
+            // Add more confetti periodically
+            if (Math.random() < 0.1) {
+                confettiPieces.push(new Confetti());
+            }
+        }
+
+        // Resize canvas and start confetti on window load
+        window.onload = function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            // Generate initial confetti pieces
+            for (let i = 0; i < 50; i++) {
+                confettiPieces.push(new Confetti());
+            }
+            animate();
+        };
+
+        // Handle window resize
+        window.onresize = function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        };
+    </script>
+</body>
+</html>
